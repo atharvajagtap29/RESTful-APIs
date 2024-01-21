@@ -8,6 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
@@ -23,7 +24,8 @@ public class StudentServiceImpl implements StudentService {
 	@Override
 	// we can receive list of students in pages
 	public List<Student> getStudents(int pageNumber, int pageSize) {
-		Pageable page = PageRequest.of(pageNumber, pageSize);
+		Pageable page = PageRequest.of(pageNumber, pageSize, Direction.DESC, "id"); // whichever field you pass here,
+																					// that will be ordered
 		return repo.findAll(page).getContent();
 	}
 
@@ -68,6 +70,7 @@ public class StudentServiceImpl implements StudentService {
 		return repo.findByEmailContaining(keyword);
 	}
 
+	// For patch request
 	@Override
 	public Student updateOnField(int studId, Map<String, Object> fields) {
 		Optional<Student> student = repo.findById(studId); // This line will find the student from the id parameter
@@ -77,14 +80,25 @@ public class StudentServiceImpl implements StudentService {
 			fields.forEach((key, value) -> {
 				Field field = ReflectionUtils.findField(Student.class, key); // here we will get that particular field
 																				// need to update
-				field.setAccessible(true);  // give modify or update access
-				ReflectionUtils.setField(field, student.get(), value);  // set new value on the field -> of student -> to 'value'
+				field.setAccessible(true); // give modify or update access
+				ReflectionUtils.setField(field, student.get(), value); // set new value on the field -> of student -> to
+																		// 'value'
 			});
 			repo.save(student.get());
 			return student.get();
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public List<Student> getStudentByNameOrLocation(String name, String location) {
+		return repo.getStudentsByNameOrLocation(name, location);
+	}
+
+	@Override
+	public Integer deleteStudentByName(String name) {
+		return repo.deleteStudentByName(name);
 	}
 
 }

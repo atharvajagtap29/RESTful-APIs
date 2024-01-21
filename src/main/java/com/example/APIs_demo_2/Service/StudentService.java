@@ -24,4 +24,8 @@ public interface StudentService {
 	List<Student> getStudentByEmailDomain(String keyword);
 	
 	Student updateOnField(int studId, Map<String, Object> fields);
+	
+	List<Student> getStudentByNameOrLocation(String name, String location);
+	
+	Integer deleteStudentByName(String name);
 }

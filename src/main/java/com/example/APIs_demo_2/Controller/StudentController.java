@@ -102,5 +102,15 @@ public class StudentController {
 	public ResponseEntity<List<Student>> getStudentByEmailDomain(@PathVariable("domain") String keyword) {
 		return new ResponseEntity<List<Student>>(studentService.getStudentByEmailDomain(keyword), HttpStatus.OK);
 	}
+	
+	@GetMapping("/getStudentByNameOrLocation/{name}/{location}")
+	public ResponseEntity<List<Student>> getStudentByNameOrLocation(@PathVariable("name") String stud_name , @PathVariable("location") String stud_location) {
+		return new ResponseEntity<List<Student>>(studentService.getStudentByNameOrLocation(stud_name, stud_location), HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/deleteStudentByName")
+	public ResponseEntity<String> deleteStudentByName(@RequestParam("student") String name) {
+		return new ResponseEntity<String>(studentService.deleteStudentByName(name)+" no. of rows affected", HttpStatus.OK);
+	}
 
 }
