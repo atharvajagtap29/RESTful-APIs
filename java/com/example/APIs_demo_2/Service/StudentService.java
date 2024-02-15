@@ -6,6 +6,8 @@ import java.util.Map;
 import com.example.APIs_demo_2.Model.Student;
 
 public interface StudentService {
+	
+	List<Student> getAllStudents();
 
 	List<Student> getStudents(int pageNumber, int pageSize);
 	

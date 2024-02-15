@@ -20,11 +20,17 @@ public class StudentServiceImpl implements StudentService {
 
 	@Autowired
 	StudentRepo repo;
-
+	
+	// get all the existing students
+	@Override
+	public List<Student> getAllStudents() {
+		return repo.findAll();
+	}
+	
 	@Override
 	// we can receive list of students in pages
 	public List<Student> getStudents(int pageNumber, int pageSize) {
-		Pageable page = PageRequest.of(pageNumber, pageSize, Direction.DESC, "id"); // whichever field you pass here,
+		Pageable page = PageRequest.of(pageNumber, pageSize, Direction.ASC, "id"); // whichever field you pass here,
 																					// that will be ordered
 		return repo.findAll(page).getContent();
 	}

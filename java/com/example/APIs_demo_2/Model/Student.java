@@ -26,7 +26,6 @@ import lombok.ToString;
 public class Student {
 	
 	// Use these same field names inside the request body in your URL or use @JsonProperty
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
@@ -55,7 +54,7 @@ public class Student {
 	@NotBlank(message = "Major must not be null")
 	private String major;
 
-// ------------------------------------------------------------ CONSTANTS ------------------------------------------------------------
+// ---------------------------------------------------CONSTANTS------------------------------------------------------------
 	
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.SubscribeRequest;
 import com.example.APIs_demo_2.Model.Student;
 import com.example.APIs_demo_2.Service.StudentService;
 
@@ -36,12 +39,24 @@ public class StudentController {
 
 	@Autowired
 	private StudentService studentService;
+	
+// ---------------------------------------------------- AMAZON SNS RESOURCES --------------------------------------------------------
+	
+	@Autowired
+	private AmazonSNSClient amazonSNSClient;
+	
+	private String TOPIC_ARN = "arn:aws:sns:ap-south-1:471648522815:MySNS_Topic1";
 
-	/*------------------------------------------------------ RESTful Services ------------------------------------------------------------*/
+	/*------------------------------------------------ RESTful Services ------------------------------------------------------------*/
 
 	@GetMapping("/appDetails")
 	public ResponseEntity<String> getAppDetails() {
 		return new ResponseEntity<String>(applicationName + " - " + applicationVersion, HttpStatus.OK);
+	}
+	
+	@GetMapping("/getAllStudents")
+	public ResponseEntity<List<Student>> getAllStudents() {
+		return new ResponseEntity<List<Student>>(studentService.getAllStudents(), HttpStatus.OK);
 	}
 
 	// URI - http://localhost:8080/api/students/getStudents
@@ -112,5 +127,26 @@ public class StudentController {
 	public ResponseEntity<String> deleteStudentByName(@RequestParam("student") String name) {
 		return new ResponseEntity<String>(studentService.deleteStudentByName(name)+" no. of rows affected", HttpStatus.OK);
 	}
-
+	
+// ------------------------------------------------------Amazon SNS---------------------------------------------------------------------------------
+	
+	@GetMapping("/subscribe/{email}")
+	public ResponseEntity<String> subscribeToSNSTopic(@PathVariable("email") String userEmail) {
+		SubscribeRequest subscribeRequest = new SubscribeRequest(TOPIC_ARN, "email", userEmail);
+		amazonSNSClient.subscribe(subscribeRequest);
+		return new ResponseEntity<String>("Check email for subscription request", HttpStatus.OK);
+	}
+	
+	@GetMapping("/publish/{msg}")
+	public ResponseEntity<String> publishToTopic(@PathVariable("msg") String userMsg) {
+		PublishRequest publishRequest = new PublishRequest(TOPIC_ARN, userMsg, "Demo SNS Subject");
+		amazonSNSClient.publish(publishRequest);
+		return new ResponseEntity<String>("Message Published", HttpStatus.OK);
+	}
+	
+	@GetMapping("/show")
+	public String show() {
+		return "Hii bro";
+	}
+	
 }
